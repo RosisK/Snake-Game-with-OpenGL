@@ -363,7 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Custome files to ignore
-OpenGL/"Snake Game Plan.txt"
 OpenGL/snake.cpp
 
 !Dependencies/GLEW/lib/Release/
