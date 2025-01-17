@@ -20,6 +20,7 @@ mono_crash.*
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
+!Dependencies/GLEW/lib/Release/Win32/glew32s.lib
 [Rr]eleases/
 x64/
 x86/
