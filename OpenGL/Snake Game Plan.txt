@@ -1,0 +1,12 @@
+Snake Game Plan
+
+- Define window width, window height and the grid size
+- Create a class for a point
+- Make an array of points to represent snake 
+- Make a single apple
+- Make a function to draw squares, using which you can draw apples and parts of snake
+- Make a function to draw snake
+- Make a function to draw apples
+- Make a function to handle movements of snake
+- Make a game over function
+- Make a function to handle keyboard inputs
