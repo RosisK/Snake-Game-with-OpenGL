@@ -6,19 +6,29 @@
 #include <ctime>
 #include <cstdlib>
 
+// Constants
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
 const int GRID_SIZE = 20;
+
+// Class for Game states
+enum class GameState
+{
+	START_SCREEN,
+	PLAYING,
+	GAME_OVER
+};
 
 struct Point 
 {
 	int x, y;
 };
 
+// Global variables
 std::vector<Point> snake = {{ 10, 10 }};
 Point apple = { 15, 15 };
 Point direction = { 1, 0 };
-bool gameOver = false;
+GameState currentGameState = GameState::START_SCREEN;
 
 void drawSquare(float x, float y, float size)
 {
@@ -58,9 +68,22 @@ void drawGameOver()
 	std::cout << "Game Over\n";
 }
 
+void drawStartScreen()
+{
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glVertex2f(0.3f, 0.45f);
+	glVertex2f(0.7f, 0.45f);
+	glVertex2f(0.7f, 0.55f);
+	glVertex2f(0.3f, 0.55f);
+	glEnd();
+
+	std::cout << "Press SPACE to Start\n";
+}
+
 void updateSnake()
 {
-	if (gameOver)
+	if (currentGameState != GameState::PLAYING)
 		return;
 
 	// Move snake
@@ -69,7 +92,7 @@ void updateSnake()
 	// Check collision with wall
 	if (newHead.x < 0 || newHead.x >= GRID_SIZE || newHead.y < 0 || newHead.y >= GRID_SIZE)
 	{
-		gameOver = true;
+		currentGameState = GameState::GAME_OVER;
 		return;
 	}
 
@@ -78,7 +101,7 @@ void updateSnake()
 	{
 		if (newHead.x == segment.x && newHead.y == segment.y)
 		{
-			gameOver = true;
+			currentGameState = GameState::GAME_OVER; 
 			return;
 		}
 	}
@@ -94,8 +117,14 @@ void updateSnake()
 
 void keyboardInput(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	
 	if (action == GLFW_PRESS)
 	{
+		if (currentGameState == GameState::START_SCREEN)
+		{
+			if (key == GLFW_KEY_SPACE)
+				currentGameState = GameState::PLAYING;
+		}
 		switch (key)
 		{
 		case GLFW_KEY_W:
@@ -153,15 +182,18 @@ int main()
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		if (!gameOver)
+		if (currentGameState == GameState::PLAYING)
 			updateSnake();
 
-		drawSnake();
-		drawApple();
-
-		if (gameOver)
+		if (currentGameState == GameState::START_SCREEN)
+			drawStartScreen();
+		else if (currentGameState == GameState::GAME_OVER)
 			drawGameOver();
-
+		else
+		{
+			drawSnake();
+			drawApple();
+		}
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
