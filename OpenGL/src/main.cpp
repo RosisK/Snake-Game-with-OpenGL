@@ -101,7 +101,7 @@ void updateSnake()
 	{
 		if (newHead.x == segment.x && newHead.y == segment.y)
 		{
-			currentGameState = GameState::GAME_OVER; 
+			currentGameState = GameState::GAME_OVER;
 			return;
 		}
 	}
@@ -115,6 +115,17 @@ void updateSnake()
 		snake.pop_back();
 }
 
+void restartGame(int key)
+{
+	if (currentGameState == GameState::GAME_OVER && key == GLFW_KEY_SPACE)
+	{
+		currentGameState = GameState::START_SCREEN;
+		snake = { { 10, 10 } };
+		apple = { 15, 15 };
+		direction = { 1, 0 };
+	}
+}
+
 void keyboardInput(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	
@@ -123,8 +134,19 @@ void keyboardInput(GLFWwindow* window, int key, int scancode, int action, int mo
 		if (currentGameState == GameState::START_SCREEN)
 		{
 			if (key == GLFW_KEY_SPACE)
+			{
+				std::cout << "Starting Game...\n";
 				currentGameState = GameState::PLAYING;
+			}
+		}	
+		else if (currentGameState == GameState::GAME_OVER)
+		{
+			if (key == GLFW_KEY_SPACE)
+				restartGame(key);
+			else if (key == GLFW_KEY_ESCAPE)
+				glfwSetWindowShouldClose(window, GLFW_TRUE);
 		}
+
 		switch (key)
 		{
 		case GLFW_KEY_W:
@@ -177,7 +199,7 @@ int main()
 	glOrtho(0, 1, 0, 1, -1, 1);
 
 	srand(static_cast<unsigned int>(time(nullptr)));
-
+	
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -188,7 +210,9 @@ int main()
 		if (currentGameState == GameState::START_SCREEN)
 			drawStartScreen();
 		else if (currentGameState == GameState::GAME_OVER)
+		{
 			drawGameOver();
+		}
 		else
 		{
 			drawSnake();
