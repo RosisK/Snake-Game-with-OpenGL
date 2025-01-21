@@ -29,6 +29,11 @@ std::vector<Point> snake = {{ 10, 10 }};
 Point apple = { 15, 15 };
 Point direction = { 1, 0 };
 GameState currentGameState = GameState::START_SCREEN;
+int score = 0;
+
+// Console output check flags
+bool printedGameOver = false;
+bool printedStartGame = false;
 
 void drawSquare(float x, float y, float size)
 {
@@ -65,7 +70,11 @@ void drawGameOver()
 	glVertex2f(0.3f, 0.55f);
 	glEnd();
 
-	std::cout << "Game Over\n";
+	if (!printedGameOver)
+	{
+		std::cout << "Game Over.\nFinal Score: " << score << std::endl;
+		printedGameOver = true;
+	}
 }
 
 void drawStartScreen()
@@ -78,7 +87,11 @@ void drawStartScreen()
 	glVertex2f(0.3f, 0.55f);
 	glEnd();
 
-	std::cout << "Press SPACE to Start\n";
+	if (!printedStartGame)
+	{
+		std::cout << "Press SPACE to Start\n";
+		printedStartGame = true;
+	}
 }
 
 void updateSnake()
@@ -110,7 +123,11 @@ void updateSnake()
 	snake.insert(snake.begin(), newHead);
 
 	if (newHead.x == apple.x && newHead.y == apple.y)
+	{
+		score++;
+		std::cout << "Score: " << score << std::endl;
 		apple = { rand() % GRID_SIZE, rand() % GRID_SIZE };
+	}
 	else
 		snake.pop_back();
 }
@@ -123,6 +140,7 @@ void restartGame(int key)
 		snake = { { 10, 10 } };
 		apple = { 15, 15 };
 		direction = { 1, 0 };
+		score = 0;
 	}
 }
 
@@ -205,7 +223,11 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		if (currentGameState == GameState::PLAYING)
+		{
 			updateSnake();
+			drawSnake();
+			drawApple();
+		}
 
 		if (currentGameState == GameState::START_SCREEN)
 			drawStartScreen();
@@ -213,11 +235,7 @@ int main()
 		{
 			drawGameOver();
 		}
-		else
-		{
-			drawSnake();
-			drawApple();
-		}
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
