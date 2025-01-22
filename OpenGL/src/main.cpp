@@ -7,6 +7,7 @@
 #include <cstdlib>
 
 // Constants
+const int hi;
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
 const int GRID_SIZE = 20;
